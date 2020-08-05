@@ -11,7 +11,7 @@ function userInformationHTML(user) {
                     <img src="${user.avatar_url}" width="80" height="80" alt="${user.login}" />
                 </a>
             </div>
-            <p>Followers: ${user.followers} - Following: ${user.following} <br> Repos: ${user.public_repos}</p>
+            <p>Followers: ${user.followers} <br> Following: ${user.following} <br> Repos: ${user.public_repos}</p>
         </div>`;
 }
 
@@ -65,6 +65,9 @@ $.when(
             if (errorResponse.status === 404) {
                 $("#gh-user-data").html(
                     `<h2>No info found for user ${username}</h2>`);
+            } else if (errorResponse.status === 403) {
+                var resetTime = new Date(errorResponse.getResponseHeader('X-RateLimit-Reset') * 1000);
+                $("#gh-user-data").html(`<h4>Too many requests, please wait until ${resetTime.toLocaleTimeString()}</h4>`);
             } else {
                 console.log(errorResponse);
                 $("#gh-user-data").html(
